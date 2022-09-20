@@ -17,7 +17,7 @@ def constraint2(x):
 
 def constraint3(x):
     total = x[0] + x[1]
-    return x[0] / total - 0.33
+    return 0.33 - (x[0] / total)
 
 con1 = {'type': 'ineq', 'fun': constraint1}
 con2 = {'type': 'ineq', 'fun': constraint2}
