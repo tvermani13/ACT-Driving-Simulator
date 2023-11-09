@@ -153,13 +153,14 @@ def plot_pareto_optimal_frontier(y_vals, highlight_pt):
     # Display the plot
     plt.show()
 
-def plot_pareto_optimal_frontier(y_vals):
-    i_values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] 
-    plt.plot(i_values, y_vals, label='Pareto Optimal Frontier', marker='o')
+def plot_pareto_optimal_frontier(x_vals, y_vals):
+    # i_values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] 
+    
+    plt.plot(x_vals, y_vals, label='Pareto Optimal Frontier', marker='o')
     
     # Adding labels and title
-    plt.xlabel('Weights')
-    plt.ylabel('Outcomes')
+    plt.xlabel('f1')
+    plt.ylabel('f2')
     plt.title('Graphing of Pareto Optimal Frontier')
 
     # Display the plot
@@ -172,18 +173,21 @@ def main():
     normal_1 = normalize_1(initial_values)
     normal_2 = normalize_2(initial_values)     
     max_output = 0
-    outputs = []
+    x_vals = []
+    y_vals = []
     for i in np.arange(0, 1.1, 0.1):
         extra_args = (i)
         curr_result = minimize(weighted_function, initial_values, constraints=constraint_list, bounds=bounds, args=extra_args)
-        curr_fun = curr_result.fun
-        outputs.append(curr_fun)
-        if curr_fun > max_output:
-            max_output = curr_fun
+        curr_x = curr_result.x
+        x_vals.append(objective_function_1(curr_x))
+        y_vals.append(objective_function_2(curr_x))
+        # outputs.append(curr_fun)
+        # if curr_fun > max_output:
+        #     max_output = curr_fun
     
     print(max_output)
     # plot_pareto_optimal_frontier(outputs, max_output)
-    plot_pareto_optimal_frontier(outputs)
+    plot_pareto_optimal_frontier(x_vals, y_vals)
     
 
 main()
