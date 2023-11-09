@@ -137,10 +137,14 @@ def weighted_function(x,i):
     return (normalize_1(x) * i) + (normalize_2(x) * (1-i))
 
 
-def plot_pareto_optimal_frontier(y_vals):
+def plot_pareto_optimal_frontier(y_vals, highlight_pt):
     i_values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] 
-    plt.plot(i_values, y_vals)
+    plt.plot(i_values, y_vals, label='Pareto Optimal Frontier', marker='o')
 
+    highlight_index = i_values.index(highlight_pt)
+    plt.scatter(highlight_x, y_vals[highlight_index], color='red', label=f'Highlight ({highlight_x}, {y_vals[highlight_index]})')
+
+    
     # Adding labels and title
     plt.xlabel('Weights')
     plt.ylabel('Outcomes')
@@ -149,7 +153,17 @@ def plot_pareto_optimal_frontier(y_vals):
     # Display the plot
     plt.show()
 
+def plot_pareto_optimal_frontier(y_vals):
+    i_values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] 
+    plt.plot(i_values, y_vals, label='Pareto Optimal Frontier', marker='o')
+    
+    # Adding labels and title
+    plt.xlabel('Weights')
+    plt.ylabel('Outcomes')
+    plt.title('Graphing of Pareto Optimal Frontier')
 
+    # Display the plot
+    plt.show()
 
 
 
@@ -167,6 +181,8 @@ def main():
         if curr_fun > max_output:
             max_output = curr_fun
     
+    print(max_output)
+    # plot_pareto_optimal_frontier(outputs, max_output)
     plot_pareto_optimal_frontier(outputs)
     
 
