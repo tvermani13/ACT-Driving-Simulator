@@ -23,8 +23,6 @@ import matplotlib.pyplot as plt
     
 ################
 
-
-
 ########## OBJECTIVE FUNCTIONS TO MINIMIZE ##############
 
 def objective_function_1(x):
