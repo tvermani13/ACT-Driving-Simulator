@@ -1,4 +1,4 @@
-from scipy.optimize import minimize
+from scipy.optimize import minimize, approx_fprime
 from scipy.integrate import quad
 import numpy as np
 import matplotlib.pyplot as plt
@@ -44,6 +44,7 @@ def objective_function_2(x):
     x6 = x[14]
     return (0.3 * (x1**2)) + (x2 + 0.2*(x2**2)) + (7*x3 + 0.1 * (x3**2)) + (15*x4 + 0.3 * (x4**2)) + (5*x5 + 0.2*(x5**2)) + (8*x6 + 0.1*(x6**2))
 
+
 ####### CONSTRAINTS ##########
 
 def constraint_1(x):
@@ -87,6 +88,8 @@ constraint_list = [con_1, con_2, con_3, con_4, con_5, con_6, con_7]
 
 initial_values = np.array([21, 35, 3, 75, 93, 86, 12, 64, 22, 53, 78, 31, 42, 55, 64])
 
+epsilon_values = np.array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1])
+
 bounds = ((0, None), (0, None), (0, None), (0, None), (0, None), (0, None), (0, None),
         (0, None), (0, None), (0, None), (0, None), (0, None), (0, None), (0, None), (0, None))
 
@@ -100,6 +103,32 @@ fun_2 = result2.fun
     
 ################################### END GLOBALS ##################################
 
+    
+########################## Linearized Objective Functions ##########################
+
+def linearized_objective_function_1():
+    x = approx_fprime(xk=initial_values, f=objective_function_1, epsilon=1.49e-08)
+    x1 = x[9]
+    x2 = x[10]
+    x3 = x[11]
+    x4 = x[12]
+    x5 = x[13]
+    x6 = x[14]
+    return ((0.15*(x1**2)) + (x2 + 0.1*(x2**2)) + (7*x3 + 0.05*(x3**2)) + (15*x4 + 0.15*(x4**2)) +( 5*x5 + 0.1*(x5**2)) + (8*x6 + 0.05*(x6**2)))
+
+
+def linearized_objective_function_2():
+    x = approx_fprime(xk=initial_values, f=objective_function_2, epsilon=1.49e-08)
+    x1 = x[9]
+    x2 = x[10]
+    x3 = x[11]
+    x4 = x[12]
+    x5 = x[13]
+    x6 = x[14]
+    return (0.3 * (x1**2)) + (x2 + 0.2*(x2**2)) + (7*x3 + 0.1 * (x3**2)) + (15*x4 + 0.3 * (x4**2)) + (5*x5 + 0.2*(x5**2)) + (8*x6 + 0.1*(x6**2))
+
+
+##############################################################################
     
 def normalize_1(x):
     # f_i, f_i_o, f_i_max - parameters?
@@ -130,9 +159,16 @@ def normalize_2(x):
 
     return (((0.3 * (x1**2)) + (x2 + 0.2*(x2**2)) + (7*x3 + 0.1 * (x3**2)) + (15*x4 + 0.3 * (x4**2)) + (5*x5 + 0.2*(x5**2)) + (8*x6 + 0.1*(x6**2))) - fun_2) / denom_2
 
+# def linearize_objective():
+#     ## xk, f, epsilon, *args ->
+#     result = approx_fprime()
+#     return result
     
 def weighted_function(x,i):
     return (normalize_1(x) * i) + (normalize_2(x) * (1-i))
+
+def linearized_weighted_function(x, i):
+    return (linearized_objective_function_1() * i) + (linearized_objective_function_2() * (1-i)) 
 
 
 def plot_pareto_optimal_frontier(y_vals, highlight_pt):
@@ -150,6 +186,8 @@ def plot_pareto_optimal_frontier(y_vals, highlight_pt):
 
     # Display the plot
     plt.show()
+    
+    
 
 def plot_pareto_optimal_frontier(x_vals, y_vals):
     # i_values = [0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1] 
@@ -166,8 +204,10 @@ def plot_pareto_optimal_frontier(x_vals, y_vals):
 
 
 
-def main():
-    ## normalize the results of the minimize calls
+def main():    
+    
+    ############## Pareto Frontier for normalized objective functions ##############
+    
     normal_1 = normalize_1(initial_values)
     normal_2 = normalize_2(initial_values)     
     max_output = 0
@@ -179,6 +219,7 @@ def main():
         curr_x = curr_result.x
         x_vals.append(objective_function_1(curr_x))
         y_vals.append(objective_function_2(curr_x))
+        
         # outputs.append(curr_fun)
         # if curr_fun > max_output:
         #     max_output = curr_fun
@@ -187,5 +228,28 @@ def main():
     # plot_pareto_optimal_frontier(outputs, max_output)
     plot_pareto_optimal_frontier(x_vals, y_vals)
     
+    ############## Pareto Frontier for linearized objective functions ##############
+    
+    linear_1 = linearized_objective_function_1()
+    linear_2 = linearized_objective_function_2()
+    
+    max_output = 0
+    x_vals = []
+    y_vals = []
+    for i in np.arange(0, 1.1, 0.1):
+        extra_args = (i)
+        curr_result = minimize(linearized_weighted_function, initial_values, constraints=constraint_list, bounds=bounds, args=extra_args)
+        curr_x = curr_result.x
+        x_vals.append(linearized_objective_function_1())
+        y_vals.append(linearized_objective_function_2())
+        # outputs.append(curr_fun)
+        # if curr_fun > max_output:
+        #     max_output = curr_fun
+    
+    print(max_output)
+    # plot_pareto_optimal_frontier(outputs, max_output)
+    plot_pareto_optimal_frontier(x_vals, y_vals)
+    
+
 
 main()
