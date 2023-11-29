@@ -106,8 +106,8 @@ fun_2 = result2.fun
     
 ########################## Linearized Objective Functions ##########################
 
-def linearized_objective_function_1():
-    x = approx_fprime(xk=initial_values, f=objective_function_1, epsilon=1.49e-08)
+def linearized_objective_function_1(x):
+    x = approx_fprime(xk=x, f=objective_function_1, epsilon=1.49e-08)
     x1 = x[9]
     x2 = x[10]
     x3 = x[11]
@@ -117,8 +117,8 @@ def linearized_objective_function_1():
     return ((0.15*(x1**2)) + (x2 + 0.1*(x2**2)) + (7*x3 + 0.05*(x3**2)) + (15*x4 + 0.15*(x4**2)) +( 5*x5 + 0.1*(x5**2)) + (8*x6 + 0.05*(x6**2)))
 
 
-def linearized_objective_function_2():
-    x = approx_fprime(xk=initial_values, f=objective_function_2, epsilon=1.49e-08)
+def linearized_objective_function_2(x):
+    x = approx_fprime(xk=x, f=objective_function_2, epsilon=1.49e-08)
     x1 = x[9]
     x2 = x[10]
     x3 = x[11]
@@ -168,7 +168,7 @@ def weighted_function(x,i):
     return (normalize_1(x) * i) + (normalize_2(x) * (1-i))
 
 def linearized_weighted_function(x, i):
-    return (linearized_objective_function_1() * i) + (linearized_objective_function_2() * (1-i)) 
+    return (linearized_objective_function_1(x) * i) + (linearized_objective_function_2(x) * (1-i)) 
 
 
 def plot_pareto_optimal_frontier(y_vals, highlight_pt):
@@ -230,8 +230,8 @@ def main():
     
     ############## Pareto Frontier for linearized objective functions ##############
     
-    linear_1 = linearized_objective_function_1()
-    linear_2 = linearized_objective_function_2()
+    linear_1 = linearized_objective_function_1(initial_values)
+    linear_2 = linearized_objective_function_2(initial_values)
     
     max_output = 0
     x_vals = []
@@ -240,8 +240,8 @@ def main():
         extra_args = (i)
         curr_result = minimize(linearized_weighted_function, initial_values, constraints=constraint_list, bounds=bounds, args=extra_args)
         curr_x = curr_result.x
-        x_vals.append(linearized_objective_function_1())
-        y_vals.append(linearized_objective_function_2())
+        x_vals.append(linearized_objective_function_1(curr_x))
+        y_vals.append(linearized_objective_function_2(curr_x))
         # outputs.append(curr_fun)
         # if curr_fun > max_output:
         #     max_output = curr_fun
