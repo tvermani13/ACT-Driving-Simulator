@@ -1,4 +1,7 @@
-# import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy.special as sp
+from scipy.interpolate import approximate_taylor_polynomial
 
 # # Example lists
 # x_values = [1, 2, 3, 4, 5]  # Replace with your x-axis values
@@ -32,3 +35,25 @@
 # x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15]
 # result = transform_function(x)
 # print(result)
+
+
+
+# import sympy as sp
+# x = sp.Symbol('x')
+# f = sp.sin(x)
+# n = 5
+# taylor_series = f.series(x, 0, n)
+# print(taylor_series)
+
+
+x = np.linspace(-10.0, 10.0, num=100)
+plt.plot(x, np.sin(x), label="sin curve")
+for degree in np.arange(1, 15, step=2):
+    sin_taylor = approximate_taylor_polynomial(np.sin, 0, degree, 1,
+                                               order=degree + 2)
+    plt.plot(x, sin_taylor(x), label=f"degree={degree}")
+plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left',
+           borderaxespad=0.0, shadow=True)
+plt.tight_layout()
+plt.axis([-10, 10, -10, 10])
+plt.show()

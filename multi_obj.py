@@ -2,6 +2,8 @@ from scipy.optimize import minimize, approx_fprime
 from scipy.integrate import quad
 import numpy as np
 import matplotlib.pyplot as plt
+import sympy as sp
+
 
 ###### 
 
@@ -23,7 +25,9 @@ import matplotlib.pyplot as plt
     
 ################
 
-########## OBJECTIVE FUNCTIONS TO MINIMIZE ##############
+
+
+########## OBJECTIVE FUNCTIONS ##############
 
 def objective_function_1(x):
     ## plugged in the link performance function into given objective function, integrated with respect to x_i
@@ -45,7 +49,8 @@ def objective_function_2(x):
     return (0.3 * (x1**2)) + (x2 + 0.2*(x2**2)) + (7*x3 + 0.1 * (x3**2)) + (15*x4 + 0.3 * (x4**2)) + (5*x5 + 0.2*(x5**2)) + (8*x6 + 0.1*(x6**2))
 
 
-####### CONSTRAINTS ##########
+################################### CONSTRAINTS & GLOBALS ##################################
+
 
 def constraint_1(x):
     return x[0] + x[1] + x[2] + x[3] + x[4] + x[5] + x[6] + x[7] + x[8] - 200
@@ -68,14 +73,6 @@ def constraint_6(x):
 def constraint_7(x):
     return x[14] - (x[2] + x[5] + x[8])
 
-
-def minimize_objectives(initial_values, bounds, constraint_list):
-    obj_1_result = minimize(objective_function_1, initial_values, bounds=bounds, constraints=constraint_list)
-    obj_2_result = minimize(objective_function_2, initial_values, bounds=bounds, constraints=constraint_list)
-    return obj_1_result, obj_2_result
-
-
-################################### GLOBALS ##################################
 
 con_1 = {"type": "eq", "fun": constraint_1}
 con_2 = {"type": "eq", "fun": constraint_2}
@@ -103,6 +100,16 @@ fun_2 = result2.fun
     
 ################################### END GLOBALS ##################################
 
+
+
+
+def minimize_objectives(initial_values, bounds, constraint_list):
+    obj_1_result = minimize(objective_function_1, initial_values, bounds=bounds, constraints=constraint_list)
+    obj_2_result = minimize(objective_function_2, initial_values, bounds=bounds, constraints=constraint_list)
+    return obj_1_result, obj_2_result
+
+    
+    
     
 ########################## Linearized Objective Functions ##########################
 
